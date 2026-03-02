@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <stdexcept>
 
 #include "cpu.h"
 
@@ -27,9 +28,20 @@ int CPU::execute(int opcode) {
 
     switch (id) {
     case 0x0:
-        if (kk == 0xFD) return -1; // EXIT opcode from Super Chip-48
+        if (nnn == 0x0E0) return 0;       // CLS  TODO: Implement clear display logic
+        else if (nnn == 0x0EE) {
+            if (SP - 1 == 0x10) throw std::out_of_range("CPU::execute(int opcode) stack underflow");
+            PC = stack[--SP];
+            stack[SP] = 0;
+        }
+        else if (nnn == 0x0FD) return -1; // EXIT opcode from Super Chip-48
         break;
     case 0x1:
+        PC = nnn - 2;
+        break;
+    case 0x2:
+        if (SP + 1 == 0x10) throw std::out_of_range("CPU::execute(int opcode) stack overflow");
+        stack[SP++] = PC;
         PC = nnn - 2;
         break;
     case 0x6:

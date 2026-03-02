@@ -19,7 +19,7 @@ Chip8::~Chip8() {
 }
 
 void Chip8::read_program(string filename) {
-    ifstream file("test.ch8", ios::binary);
+    ifstream file(filename, ios::binary);
     if (file) {
         int i = 0x200;
         uint8_t data;
@@ -43,7 +43,7 @@ int Chip8::cpu_step() {
 void Chip8::run() {
     int rc = 0;
     int cycle = 0;
-    while (rc != -1) {
+    while (rc != -1 && cycle < 5) {
         print_cpu();
         rc = cpu_step();
         cycle++;
@@ -51,9 +51,9 @@ void Chip8::run() {
 }
 
 void Chip8::print_cpu() {
-    cout << "CPU State\n-----------\n";
+    cout << "-------------------------------\nCPU State\n-------------------------------\n";
     cout << setfill('0') << uppercase << hex;
-    cout << "PC: " << cpu.PC << "  Opcode: " << memory.read_16(cpu.PC) << '\n';
+    cout << setw(3) << "PC: " << cpu.PC << "  Opcode: " << setw(4) << memory.read_16(cpu.PC) << '\n';
     cout << "I: " << setw(3) << cpu.I << '\n';
     cout << "delay: " << setw(2) << static_cast<unsigned>(cpu.delay) << '\n';
     cout << "sound: " << setw(2) << static_cast<unsigned>(cpu.sound) << '\n';
