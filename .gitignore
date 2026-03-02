@@ -54,3 +54,6 @@ dkms.conf
 # Chip8
 build/
 bin/
+
+# Editor
+.vscode

@@ -9,7 +9,6 @@ public:
     int read_16(int address);
     void print();
     void print(int start, int end);
-private:
     int* elem;
     int sz;
 };

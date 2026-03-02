@@ -1,5 +1,7 @@
+#include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <string>
 
 #include "chip8.h"
 
@@ -8,6 +10,27 @@ using namespace std;
 Chip8::Chip8() {
     memory = Memory(0x1000);
     cpu = CPU();
+}
+
+Chip8::~Chip8() {
+    delete[] memory.elem;
+    delete[] cpu.stack;
+    delete[] cpu.V;
+}
+
+void Chip8::read_program(string filename) {
+    ifstream file("test.ch8", ios::binary);
+    if (file) {
+        int i = 0x200;
+        uint8_t data;
+        while (file.read(reinterpret_cast<char*>(&data), sizeof(data))) {
+            memory[i] = data;
+            i++;
+        }
+        file.close();
+    } else {
+        cerr << "Error opening file." << endl;
+    }
 }
 
 int Chip8::cpu_step() {
