@@ -9,8 +9,8 @@ CPU::CPU() {
     delay = 0;
     sound = 0;
     SP = 0;
-    stack = new uint_fast16_t[0x10];
-    V = new uint_fast8_t[0x10];
+    stack = new int[0x10];
+    V = new int[0x10];
 
     for (int i = 0; i < 0x10; i++) {
         V[i] = 0;
@@ -44,8 +44,43 @@ int CPU::execute(int opcode) {
         stack[SP++] = PC;
         PC = nnn - 2;
         break;
+    case 0x3:
+        if (V[x] == kk) PC += 2;
+        break;
+    case 0x4:
+        if (V[x] != kk) PC += 2;
+        break;
+    case 0x5:
+        if (V[x] == V[y]) PC += 2;
+        break;
     case 0x6:
         V[x] = kk;
+        break;
+    case 0x7:
+        V[x] += kk;
+        break;
+    case 0x8:
+        if      (n == 0x0) V[x] = V[y];
+        else if (n == 0x1) V[x] |= V[y];
+        else if (n == 0x2) V[x] &= V[y];
+        else if (n == 0x3) V[x] ^= V[y];
+        else if (n == 0x4) {
+            int sum = V[x] + V[y];
+            V[0xF] = sum > 0xFF;
+            V[x] = sum & 0xFF;
+        } else if (n == 0x5) {
+            V[0xF] = V[x] > V[y];
+            V[x] = (V[x] - V[y]) & 0xFF;
+        } else if (n == 0x6) {
+            V[0xF] = (V[x] & 1) == 1;
+            V[x] /= 2;
+        } else if (n == 0x7) {
+            V[0xF] = V[y] > V[x];
+            V[x] = (V[y] - V[x]) & 0xFF;
+        } else if (n == 0xE) {
+            V[0xF] = (V[x] & 1) == 1;
+            V[x] *= 2;
+        }
         break;
     case 0xA:
         I = nnn;

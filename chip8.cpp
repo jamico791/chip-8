@@ -43,9 +43,10 @@ int Chip8::cpu_step() {
 void Chip8::run() {
     int rc = 0;
     int cycle = 0;
-    while (rc != -1 && cycle < 5) {
-        print_cpu();
+    print_cpu();
+    while (rc != -1) {
         rc = cpu_step();
+        print_cpu();
         cycle++;
     }
 }
