@@ -82,8 +82,14 @@ int CPU::execute(int opcode) {
             V[x] *= 2;
         }
         break;
+    case 0x9:
+        if (V[x] != V[y]) PC += 2;
+        break;
     case 0xA:
         I = nnn;
+        break;
+    case 0xB:
+        PC = (nnn + V[0]) - 2;
         break;
     default:
         return -1;
