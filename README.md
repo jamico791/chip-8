@@ -9,23 +9,23 @@
     - [x] 0nnn - SYS addr (Not implementing)
     - [x] 1nnn - JP addr
     - [x] 2nnn - CALL addr
-    - [ ] 3xkk - SE Vx, byte
-    - [ ] 4xkk - SNE Vx, byte
-    - [ ] 5xy0 - SE Vx, Vy
+    - [x] 3xkk - SE Vx, byte
+    - [x] 4xkk - SNE Vx, byte
+    - [x] 5xy0 - SE Vx, Vy
     - [x] 6xkk - LD Vx, byte
-    - [ ] 7xkk - ADD Vx, byte
-    - [ ] 8xy0 - LD Vx, Vy
-    - [ ] 8xy1 - OR Vx, Vy
-    - [ ] 8xy2 - AND Vx, Vy
-    - [ ] 8xy3 - XOR Vx, Vy
-    - [ ] 8xy4 - ADD Vx, Vy
-    - [ ] 8xy5 - SUB Vx, Vy
-    - [ ] 8xy6 - SHR Vx {, Vy}
-    - [ ] 8xy7 - SUBN Vx, Vy
-    - [ ] 8xyE - SHL Vx {, Vy}
-    - [ ] 9xy0 - SNE Vx, Vy
+    - [x] 7xkk - ADD Vx, byte
+    - [x] 8xy0 - LD Vx, Vy
+    - [x] 8xy1 - OR Vx, Vy
+    - [x] 8xy2 - AND Vx, Vy
+    - [x] 8xy3 - XOR Vx, Vy
+    - [x] 8xy4 - ADD Vx, Vy
+    - [x] 8xy5 - SUB Vx, Vy
+    - [x] 8xy6 - SHR Vx {, Vy}
+    - [x] 8xy7 - SUBN Vx, Vy
+    - [x] 8xyE - SHL Vx {, Vy}
+    - [x] 9xy0 - SNE Vx, Vy
     - [x] Annn - LD I, addr
-    - [ ] Bnnn - JP V0, addr
+    - [x] Bnnn - JP V0, addr
     - [ ] Cxkk - RND Vx, byte
     - [ ] Dxyn - DRW Vx, Vy, nibble
     - [ ] Ex9E - SKP Vx
