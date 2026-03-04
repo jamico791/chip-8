@@ -3,7 +3,9 @@
 
 #include "cpu.h"
 
-CPU::CPU() {
+using namespace std;
+
+CPU::CPU(int w, int h) {
     PC = 0x200;
     I = 0;
     delay = 0;
@@ -12,10 +14,23 @@ CPU::CPU() {
     stack = new int[0x10];
     V = new int[0x10];
 
-    for (int i = 0; i < 0x10; i++) {
-        V[i] = 0;
-        stack[i] = 0;
-    }
+    width = w;
+    height = h;
+    frame_buffer = new bool[w * h];
+}
+
+CPU::CPU() {
+    PC = 0x200;
+    I = 0;
+    delay = 0;
+    sound = 0;
+    SP = 0;
+    stack = new int[0x10];
+    V = new int[0x10];
+    
+    width = 64;
+    height = 32;
+    frame_buffer = new bool[64 * 32];
 }
 
 int CPU::execute(int opcode) {
@@ -91,8 +106,22 @@ int CPU::execute(int opcode) {
     case 0xB:
         PC = (nnn + V[0]) - 2;
         break;
+    case 0xD:
+
     default:
         return -1;
     }
     return 0;
+}
+
+bool CPU::flip_pixel(int x, int y) {
+    if (x < 0) x += width;
+    else if (x >= width) x -= width;
+
+    if (y < 0) y += height;
+    else if (y >= height) y -= height;
+
+    int i = (y * width) + x;
+    frame_buffer[i] = !frame_buffer[i];
+    return !frame_buffer[i];
 }

@@ -11,15 +11,20 @@
 using namespace std;
 
 Chip8::Chip8() {
+    int w = 64;
+    int h = 32;
+    int s = 30;
+
     memory = Memory(0x1000);
-    cpu = CPU();
-    display = Display(64, 32);
+    cpu = CPU(w, h);
+    display = Display(w, h, s, cpu.frame_buffer);
 }
 
 Chip8::~Chip8() {
     delete[] memory.elem;
     delete[] cpu.stack;
     delete[] cpu.V;
+    delete[] cpu.frame_buffer;
 }
 
 void Chip8::read_program(string filename) {
@@ -48,7 +53,7 @@ void Chip8::run() {
     int rc = 0;
     int cycle = 0;
     print_cpu();
-    while (rc != -1) {
+    while (rc != -1 && cycle < 5) {
         rc = cpu_step();
         print_cpu();
         cycle++;

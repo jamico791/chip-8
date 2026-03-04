@@ -21,6 +21,8 @@ public:
     Memory memory;
     CPU cpu;
     Display display;
+    int width;
+    int height;
 };
 
 #endif

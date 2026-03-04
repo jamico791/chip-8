@@ -31,14 +31,12 @@ using namespace std;
 // }
 
 int main(int argc, char *argv[]) {
-    // string filename = argv[1];
+    string filename = argv[1];
     Chip8 chip8 = Chip8();
     chip8.display.init();
-    // chip8.read_program(filename);
+    chip8.read_program(filename);
 
-    // chip8.run();
-
-
+    chip8.run();
 
     bool running = true;
 

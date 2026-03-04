@@ -6,18 +6,21 @@
 
 class Display {
 public:
-    Display(int width, int height);    
+    int width;
+    int height;
+    int scale;
+    bool* frame_buffer;
+
+    Display(int w, int h, int s, bool* f);    
     Display();
     bool init();
     bool loop(bool& running);
-    bool shutdown();
-    bool toggle_pixel(int x, int y);
+    void shutdown();
+    bool fill_pixel(int x, int y);
+    bool render_frame();
 private:
-    bool running;
-    int scale;
     SDL_Window* window;
     SDL_Renderer* renderer;
-    bool* pixels;
 };
 
 #endif

@@ -18,7 +18,5 @@ file(GLOB_RECURSE CHIP8_SOURCES CONFIGURE_DEPENDS
 # Create your game executable target as usual
 add_executable(chip8 WIN32 ${CHIP8_SOURCES})
 
-target_compile_options(chip8 PRIVATE -Wall -Wextra -Wpedantic)
-
 # Link to the actual SDL3 library.
 target_link_libraries(chip8 PRIVATE SDL3::SDL3)

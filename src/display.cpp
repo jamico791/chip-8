@@ -6,31 +6,33 @@
 
 using namespace std;
 
-Display::Display(int width, int height) {
-    running = false;
-    pixels = new bool[width * height];
-    scale = 30;
-    window = SDL_CreateWindow("CHIP-8", 64 * scale, 32 * scale, 0);
+Display::Display(int w, int h, int s, bool* f) {
+    width = w;
+    height = h;
+    scale = s;
+    frame_buffer = f;
+    window = SDL_CreateWindow("CHIP-8", width * scale, height * scale, 0);
     renderer = SDL_CreateRenderer(window, nullptr);
-
 }
 
 Display::Display() {
-    pixels = new bool[64 * 32];
+    width = 64;
+    height = 32;
+    scale = 30;
+    window = SDL_CreateWindow("CHIP-8", width * scale, height * scale, 0);
+    renderer = SDL_CreateRenderer(window, nullptr);
 }
 
-bool get_display_size() {
-    SDL_DisplayID primary_display = SDL_GetPrimaryDisplay();
-    SDL_Rect rect;
+// SDL_Rect* get_display_size() {
+//     SDL_DisplayID primary_display = SDL_GetPrimaryDisplay();
+//     SDL_Rect rect;
 
-    if (SDL_GetDisplayBounds(primary_display, &rect)) {
-        cout << rect.h << " " << rect.w << " " << rect.x << " " << rect.y << endl;
-    } else {
-        SDL_Log("Get display bounds failed");
-    }
-
-    return true;
-}
+//     if (SDL_GetDisplayBounds(primary_display, &rect)) {
+//         return &rect;
+//     } else {
+//         SDL_Log("Get display bounds failed");
+//     }
+// }
 
 // Returns false if it fails
 bool Display::init() {
@@ -38,7 +40,6 @@ bool Display::init() {
         SDL_Log("SDL Init failed");
         return false;
     }
-    get_display_size();
 
     return false;
 }
@@ -58,22 +59,30 @@ bool Display::loop(bool& running) {
     float x = 63;
     float y = 31;
 
-    toggle_pixel(0, 0);
-    toggle_pixel(1, 0);
-    toggle_pixel(1, 2);
-    SDL_RenderPresent(renderer);
+    render_frame();
     return true;
 }
 
-bool Display::shutdown() {
+void Display::shutdown() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    return true;
 }
 
-bool Display::toggle_pixel(int x, int y) {
+bool Display::fill_pixel(int x, int y) {
     const SDL_FRect rect = {scale * x, scale * y, (float)scale, (float)scale};
     SDL_RenderFillRect(renderer, &rect);
     return true;
+}
+
+bool Display::render_frame() {
+    for (int i = 0; i < width * height; i++) {
+
+        if (frame_buffer[i]) {
+            int x = i % width;
+            int y = i / width;
+            if(!fill_pixel(x, y)) return false;
+        }
+    }
+    return SDL_RenderPresent(renderer);
 }
