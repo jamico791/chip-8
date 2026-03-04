@@ -5,6 +5,7 @@
 
 #include "memory.h"
 #include "cpu.h"
+#include "display.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ public:
 
     Memory memory;
     CPU cpu;
+    Display display;
 };
 
 #endif

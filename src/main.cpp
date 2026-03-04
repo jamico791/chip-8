@@ -5,8 +5,6 @@
 #include <cstdint>
 #include <string>
 #include <filesystem>
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
 
 #include "chip8.h"
 
@@ -32,63 +30,24 @@ using namespace std;
 //     return direction;  /* wasn't key in W or S location, don't move. */
 // }
 
-bool get_display_size() {
-    // const SDL_DisplayMode* dm = SDL_GetDesktopDisplayMode(SDL_GetPrimaryDisplay())
-
-    SDL_DisplayID primary_display = SDL_GetPrimaryDisplay();
-    SDL_Rect rect;
-
-    if (SDL_GetDisplayBounds(primary_display, &rect)) {
-        cout << rect.h << " " << rect.w << " " << rect.x << " " << rect.y << endl;
-    } else {
-        SDL_Log("Get display bounds failed");
-    }
-
-    return true;
-}
-
 int main(int argc, char *argv[]) {
     // string filename = argv[1];
-    // Chip8 chip8 = Chip8();
-
+    Chip8 chip8 = Chip8();
+    chip8.display.init();
     // chip8.read_program(filename);
 
     // chip8.run();
 
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    int scale = 30;
-    get_display_size();
-
-    SDL_Window* window = SDL_CreateWindow("CHIP-8", 64 * scale, 32 * scale, 0);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, nullptr);
 
 
     bool running = true;
 
     while (running) {
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT)
-                running = false;
-        }
-        // SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, 12, 12);
-        // Set Background
-        SDL_SetRenderDrawColor(renderer, 0x61, 0x86, 0xA9, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(renderer);
+        chip8.display.loop(running);
 
-        // Set Pixel Color
-        SDL_SetRenderDrawColor(renderer, 0x21, 0x29, 0x46, SDL_ALPHA_OPAQUE);
-        float x = 63;
-        float y = 31;
-        const SDL_FRect rect = {scale * x, scale * y, scale, scale};
-        SDL_RenderFillRect(renderer, &rect);
-
-        SDL_RenderPresent(renderer);
     }
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    chip8.display.shutdown();
 
     return 0;
 }

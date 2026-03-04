@@ -57,3 +57,7 @@ bin/
 
 # Editor
 .vscode
+
+# SDL
+vendored/
+SDL/

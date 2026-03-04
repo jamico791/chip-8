@@ -4,12 +4,16 @@
 #include <string>
 
 #include "chip8.h"
+#include "memory.h"
+#include "cpu.h"
+#include "display.h"
 
 using namespace std;
 
 Chip8::Chip8() {
     memory = Memory(0x1000);
     cpu = CPU();
+    display = Display(64, 32);
 }
 
 Chip8::~Chip8() {
