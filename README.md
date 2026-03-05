@@ -3,7 +3,7 @@
 ## TODO
 
 - [ ] opcodes
-    - [ ] 00E0 - CLS
+    - [x] 00E0 - CLS
     - [x] 00EE - RET
     - [x] 00FD - EXIT (Super Chip-48)
     - [x] 0nnn - SYS addr (Not implementing)
@@ -27,7 +27,7 @@
     - [x] Annn - LD I, addr
     - [x] Bnnn - JP V0, addr
     - [ ] Cxkk - RND Vx, byte
-    - [ ] Dxyn - DRW Vx, Vy, nibble
+    - [x] Dxyn - DRW Vx, Vy, nibble
     - [ ] Ex9E - SKP Vx
     - [ ] ExA1 - SKNP Vx
     - [ ] Fx07 - LD Vx, DT
@@ -39,3 +39,4 @@
     - [ ] Fx33 - LD B, Vx
     - [ ] Fx55 - LD [I], Vx
     - [ ] Fx65 - LD Vx, [I]
+
