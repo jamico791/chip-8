@@ -9,35 +9,19 @@
 
 using namespace std;
 
-CPU::CPU(int w, int h, Memory& m) {
-    PC = 0x200;
-    I = 0;
-    delay = 0;
-    sound = 0;
-    SP = 0;
-    stack = new int[0x10];
-    V = new int[0x10];
-
-    width = w;
-    height = h;
-
-    memory = m;
-
-    frame_buffer.fill(false);
-}
-
-CPU::CPU() {
-    PC = 0x200;
-    I = 0;
-    delay = 0;
-    sound = 0;
-    SP = 0;
-    stack = new int[0x10];
-    V = new int[0x10];
-    
-    width = 64;
-    height = 32;
-    frame_buffer.fill(false);
+CPU::CPU(Memory& m) 
+    : PC(0x200),
+      I(0),
+      delay(0),
+      sound(0),
+      SP(0),
+      sub_stack(),
+      V(),
+      width(64),
+      height(32),
+      frame_buffer(),
+      memory(m)
+{
 }
 
 int reverse(int b) {
@@ -60,8 +44,8 @@ bool CPU::execute(int opcode) {
         if (nnn == 0x0E0) return 1;       // CLS  TODO: Implement clear display logic
         else if (nnn == 0x0EE) {
             if (SP - 1 == 0x10) throw std::out_of_range("CPU::execute(int opcode) stack underflow");
-            PC = stack[--SP];
-            stack[SP] = 0;
+            PC = sub_stack[--SP];
+            sub_stack[SP] = 0;
         }
         else if (nnn == 0x0FD) return 0; // EXIT opcode from Super Chip-48
         break;
@@ -70,7 +54,7 @@ bool CPU::execute(int opcode) {
         break;
     case 0x2:
         if (SP + 1 == 0x10) throw std::out_of_range("CPU::execute(int opcode) stack overflow");
-        stack[SP++] = PC;
+        sub_stack[SP++] = PC;
         PC = nnn - 2;
         break;
     case 0x3:

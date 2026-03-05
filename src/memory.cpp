@@ -1,3 +1,4 @@
+#include <array>
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -6,31 +7,17 @@
 
 using namespace std;
 
-Memory::Memory(int size) {
-    elem = new int[size];
-    sz = size;
-
-    for (int i = 0; i != size; ++i) {
-        elem[i] = 0;
-    }
-}
-
-Memory::Memory() {
-    sz = 0x1000;
-    elem = new int[sz];
-
-    for (int i = 0; i != sz; ++i) {
-        elem[i] = 0;
-    }
+Memory::Memory() :elem() 
+{
 }
 
 int& Memory::operator[](int address) {
-    if (address < 0 || address >= sz) throw out_of_range("Memory::read");
+    if (address < 0 || address >= elem.size()) throw out_of_range("Memory::read");
     return elem[address];
 }
 
 int Memory::read_16(int address) {
-    if (address < 0 || address >= sz) throw out_of_range("Memory::read");
+    if (address < 0 || address >= elem.size()) throw out_of_range("Memory::read");
     int high = elem[address] << 8;
     int low = elem[address + 1];
     return high + low;
@@ -55,5 +42,5 @@ void Memory::print(int start, int end) {
 }
 
 void Memory::print() {
-    print(0, sz - 1);
+    print(0, elem.size() - 1);
 }

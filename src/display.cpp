@@ -8,22 +8,18 @@
 using namespace std;
 
 Display::Display(int w, int h, int s)
-    : width(w),
-      height(h),
-      scale(s),
-      window(SDL_CreateWindow("CHIP-8", width * scale, height * scale, 0)),
-      renderer(SDL_CreateRenderer(window, nullptr))
+    : width(w), height(h), scale(s)
 {
+    window = SDL_CreateWindow("CHIP-8", width * scale, height * scale, 0);
+    renderer = SDL_CreateRenderer(window, nullptr);
     SDL_LogTrace(SDL_LOG_CATEGORY_RENDER, "Display::Display(int w, int h, int s) called");
 }
 
 Display::Display()
-    : width(64),
-      height(32),
-      scale(30),
-      window(SDL_CreateWindow("CHIP-8", width * scale, height * scale, 0)),
-      renderer(SDL_CreateRenderer(window, nullptr))
+    : width(64), height(32), scale(30)
 {
+    window = SDL_CreateWindow("CHIP-8", width * scale, height * scale, 0);
+    renderer = SDL_CreateRenderer(window, nullptr);
     SDL_LogTrace(SDL_LOG_CATEGORY_RENDER, "Display::Display() called");
 }
 

@@ -21,17 +21,11 @@ Chip8::Chip8()
     : width(64),
       height(32),
       scale(30),
-      memory(0x1000),
-      cpu(width, height, memory),
+      memory(),
+      cpu(memory),
       display(width, height, scale)
 {
     SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "Chip8::Chip8() called");
-}
-
-Chip8::~Chip8() {
-    delete[] memory.elem;
-    delete[] cpu.stack;
-    delete[] cpu.V;
 }
 
 void Chip8::read_program(string filename) {
@@ -85,25 +79,25 @@ void Chip8::print_cpu() {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, " ");
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Stack:");
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%03X %03X %03X %03X %03X %03X %03X %03X", 
-        cpu.stack[0x0],
-        cpu.stack[0x1],
-        cpu.stack[0x2],
-        cpu.stack[0x3],
-        cpu.stack[0x4],
-        cpu.stack[0x5],
-        cpu.stack[0x6],
-        cpu.stack[0x7]
+        cpu.sub_stack[0x0],
+        cpu.sub_stack[0x1],
+        cpu.sub_stack[0x2],
+        cpu.sub_stack[0x3],
+        cpu.sub_stack[0x4],
+        cpu.sub_stack[0x5],
+        cpu.sub_stack[0x6],
+        cpu.sub_stack[0x7]
 
     );
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "%03X %03X %03X %03X %03X %03X %03X %03X", 
-        cpu.stack[0x8],
-        cpu.stack[0x9],
-        cpu.stack[0xA],
-        cpu.stack[0xB],
-        cpu.stack[0xC],
-        cpu.stack[0xD],
-        cpu.stack[0xE],
-        cpu.stack[0xF]
+        cpu.sub_stack[0x8],
+        cpu.sub_stack[0x9],
+        cpu.sub_stack[0xA],
+        cpu.sub_stack[0xB],
+        cpu.sub_stack[0xC],
+        cpu.sub_stack[0xD],
+        cpu.sub_stack[0xE],
+        cpu.sub_stack[0xF]
 
     );
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, " ");

@@ -33,10 +33,10 @@ using namespace std;
 // }
 
 int main(int argc, char *argv[]) {
+    SDL_SetLogPriorities(SDL_LOG_PRIORITY_TRACE);
     string filename = argv[1];
     Chip8 chip8 = Chip8();
     chip8.init();
-    // SDL_SetLogPriorities(SDL_LOG_PRIORITY_TRACE);
     chip8.read_program(filename);
 
     bool running = true;
