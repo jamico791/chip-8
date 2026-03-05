@@ -1,11 +1,13 @@
+#include <iostream>
 #include <cstdint>
 #include <stdexcept>
 
 #include "cpu.h"
+#include "memory.h"
 
 using namespace std;
 
-CPU::CPU(int w, int h) {
+CPU::CPU(int w, int h, Memory& m) {
     PC = 0x200;
     I = 0;
     delay = 0;
@@ -17,6 +19,8 @@ CPU::CPU(int w, int h) {
     width = w;
     height = h;
     frame_buffer = new bool[w * h];
+
+    memory = m;
 }
 
 CPU::CPU() {
@@ -107,7 +111,19 @@ int CPU::execute(int opcode) {
         PC = (nnn + V[0]) - 2;
         break;
     case 0xD:
-
+        for (int i = I; i < I + n; i++) {
+            int byte = memory[i];
+            for (int j = 0; j < 8; j++) {
+                bool bit = (byte >> j) & 1;
+                cout << "bit: " << bit << " i: " << i << " j: " << j << endl;
+                if (bit) {
+                    int local_index = (i - I);
+                    if(flip_pixel(x + j, y + local_index))
+                        V[0xF] = 1;
+                } 
+            }
+        }
+        break;
     default:
         return -1;
     }
@@ -115,6 +131,7 @@ int CPU::execute(int opcode) {
 }
 
 bool CPU::flip_pixel(int x, int y) {
+    cout << "Flip: (" << x << ", " << y << ")" << endl;
     if (x < 0) x += width;
     else if (x >= width) x -= width;
 

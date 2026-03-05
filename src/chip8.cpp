@@ -16,7 +16,7 @@ Chip8::Chip8() {
     int s = 30;
 
     memory = Memory(0x1000);
-    cpu = CPU(w, h);
+    cpu = CPU(w, h, memory);
     display = Display(w, h, s, cpu.frame_buffer);
 }
 

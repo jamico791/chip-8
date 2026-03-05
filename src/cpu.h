@@ -4,10 +4,11 @@
 #include <cstdint>
 
 #include "display.h"
+#include "memory.h"
 
 class CPU {
 public:
-    CPU(int w, int h);
+    CPU(int w, int h, Memory& m);
     CPU();
     void init(bool* f, int& w, int& h);
     int execute(int opcode);
@@ -23,6 +24,7 @@ public:
     int width;
     int height;
     bool* frame_buffer;
+    Memory memory;
 };
 
 #endif
