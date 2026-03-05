@@ -16,13 +16,17 @@ public:
     void read_program(string filename);
     void print_cpu();
     int cpu_step();
-    void run();
+    void init();
+    void loop(bool& running);
+    void shutdown();
+
+    int width;
+    int height;
+    int scale;
 
     Memory memory;
     CPU cpu;
     Display display;
-    int width;
-    int height;
 };
 
 #endif

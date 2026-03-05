@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstdint>
 #include <stdexcept>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 
 #include "cpu.h"
 #include "memory.h"
@@ -18,9 +20,10 @@ CPU::CPU(int w, int h, Memory& m) {
 
     width = w;
     height = h;
-    frame_buffer = new bool[w * h];
 
     memory = m;
+
+    frame_buffer.fill(false);
 }
 
 CPU::CPU() {
@@ -34,10 +37,17 @@ CPU::CPU() {
     
     width = 64;
     height = 32;
-    frame_buffer = new bool[64 * 32];
+    frame_buffer.fill(false);
 }
 
-int CPU::execute(int opcode) {
+int reverse(int b) {
+    b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
+    b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
+    b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
+    return b;
+}
+
+bool CPU::execute(int opcode) {
     int id = opcode >> 12;
     int x = (opcode & 0xF00) >> 8;
     int y = (opcode & 0xF0) >> 4;
@@ -47,13 +57,13 @@ int CPU::execute(int opcode) {
 
     switch (id) {
     case 0x0:
-        if (nnn == 0x0E0) return 0;       // CLS  TODO: Implement clear display logic
+        if (nnn == 0x0E0) return 1;       // CLS  TODO: Implement clear display logic
         else if (nnn == 0x0EE) {
             if (SP - 1 == 0x10) throw std::out_of_range("CPU::execute(int opcode) stack underflow");
             PC = stack[--SP];
             stack[SP] = 0;
         }
-        else if (nnn == 0x0FD) return -1; // EXIT opcode from Super Chip-48
+        else if (nnn == 0x0FD) return 0; // EXIT opcode from Super Chip-48
         break;
     case 0x1:
         PC = nnn - 2;
@@ -113,9 +123,11 @@ int CPU::execute(int opcode) {
     case 0xD:
         for (int i = I; i < I + n; i++) {
             int byte = memory[i];
+            byte = reverse(byte);
+            
             for (int j = 0; j < 8; j++) {
                 bool bit = (byte >> j) & 1;
-                cout << "bit: " << bit << " i: " << i << " j: " << j << endl;
+                SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "bit: : %d i: %d j: %d", bit, i, j);
                 if (bit) {
                     int local_index = (i - I);
                     if(flip_pixel(x + j, y + local_index))
@@ -125,13 +137,13 @@ int CPU::execute(int opcode) {
         }
         break;
     default:
-        return -1;
+        return 0;
     }
-    return 0;
+    return 1;
 }
 
 bool CPU::flip_pixel(int x, int y) {
-    cout << "Flip: (" << x << ", " << y << ")" << endl;
+    SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "Flip: (%d, %d)", x, y);
     if (x < 0) x += width;
     else if (x >= width) x -= width;
 
