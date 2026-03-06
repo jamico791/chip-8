@@ -16,7 +16,7 @@ public:
     Display(int w, int h, int s);    
     Display();
     bool init();
-    bool loop(bool& running, array<bool, 64 * 32>& frame_buffer);
+    int loop(bool& running, array<bool, 64 * 32>& frame_buffer);
     void shutdown();
     bool fill_pixel(int x, int y);
     bool render_frame(array<bool, 64 * 32>& frame_buffer);

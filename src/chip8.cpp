@@ -25,6 +25,7 @@ Chip8::Chip8()
       cpu(memory),
       display(width, height, scale)
 {
+    should_step = true;
     SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "Chip8::Chip8() called");
 }
 
@@ -43,9 +44,9 @@ void Chip8::read_program(string filename) {
     }
 }
 
-int Chip8::cpu_step() {
+int Chip8::cpu_step(int key_pressed) {
     int opcode = memory.read_16(cpu.PC);
-    int rc = cpu.execute(opcode);
+    int rc = cpu.execute(opcode, key_pressed);
     cpu.PC += 2;
     return rc;
 }
@@ -55,16 +56,54 @@ void Chip8::init() {
 }
 
 void Chip8::loop(bool& running) {
-    press_enter_to_continue();
-    if (running) {
-        print_cpu();
-        running = cpu_step();
+    SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "Enter Chip8::loop");
+    if (should_step) {
+        bool enter_pressed = false;
+        while (!enter_pressed && running) {
+            SDL_Event step_event;
+            while (SDL_PollEvent(&step_event)) {
+                if (step_event.type == SDL_EVENT_KEY_DOWN) {
+                    if (step_event.key.scancode == SDL_SCANCODE_RETURN)
+                        enter_pressed = true;
+                    else if (step_event.key.scancode == SDL_SCANCODE_ESCAPE)
+                        running = false;
+                }
+            }
+        }
     }
-    display.loop(running, cpu.frame_buffer);
+    if (running) {
+        int key_pressed = -1;
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_KEY_DOWN) {
+                switch (event.key.scancode) {
+                case SDL_SCANCODE_ESCAPE:
+                    running = false;
+                    break;
+                default:
+                    key_pressed = event.key.scancode;
+                    break;
+                }
+            }
+
+            if (event.type == SDL_EVENT_QUIT)
+                running = false;
+        }
+
+        if (running) {
+            print_cpu();
+            running = cpu_step(key_pressed);
+            display.loop(running, cpu.frame_buffer);
+        }
+    }
 }
 
 void Chip8::shutdown() {
     display.shutdown();
+}
+
+void Chip8::step() {
+    should_step = !should_step;
 }
 
 void Chip8::print_cpu() {

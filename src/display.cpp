@@ -44,15 +44,21 @@ bool Display::init() {
     return false;
 }
 
-bool Display::loop(bool& running, array<bool, 64 * 32>& frame_buffer) {
+int Display::loop(bool& running, array<bool, 64 * 32>& frame_buffer) {
+    int key_pressed = -1;
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         // SDL_assert(event.type == SDL_EVENT_KEY_DOWN); /* just checking key presses here... */
-        if (event.key.scancode == SDL_SCANCODE_ESCAPE) {
-            SDL_Event quit_event = SDL_Event();
-            quit_event.type = SDL_EVENT_QUIT;
-            SDL_PushEvent(&quit_event);
-        } 
+        if (event.type == SDL_EVENT_KEY_DOWN) {
+            switch (event.key.scancode) {
+            case SDL_SCANCODE_ESCAPE:
+                running = false;
+                break;
+            default:
+                key_pressed = event.key.scancode;
+                break;
+            }
+        }
 
         if (event.type == SDL_EVENT_QUIT)
             running = false;

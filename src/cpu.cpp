@@ -22,6 +22,23 @@ CPU::CPU(Memory& m)
       frame_buffer(),
       memory(m)
 {
+    scancode_to_key.fill(-1);
+    scancode_to_key[SDL_SCANCODE_1] = 0x1;
+    scancode_to_key[SDL_SCANCODE_2] = 0x2;
+    scancode_to_key[SDL_SCANCODE_3] = 0x3;
+    scancode_to_key[SDL_SCANCODE_Q] = 0x4;
+    scancode_to_key[SDL_SCANCODE_W] = 0x5;
+    scancode_to_key[SDL_SCANCODE_E] = 0x6;
+    scancode_to_key[SDL_SCANCODE_A] = 0x7;
+    scancode_to_key[SDL_SCANCODE_S] = 0x8;
+    scancode_to_key[SDL_SCANCODE_D] = 0x9;
+    scancode_to_key[SDL_SCANCODE_Z] = 0xA;
+    scancode_to_key[SDL_SCANCODE_X] = 0x0;
+    scancode_to_key[SDL_SCANCODE_C] = 0xB;
+    scancode_to_key[SDL_SCANCODE_4] = 0xC;
+    scancode_to_key[SDL_SCANCODE_R] = 0xD;
+    scancode_to_key[SDL_SCANCODE_F] = 0xE;
+    scancode_to_key[SDL_SCANCODE_V] = 0xF;
 }
 
 int reverse(int b) {
@@ -31,7 +48,7 @@ int reverse(int b) {
     return b;
 }
 
-bool CPU::execute(int opcode) {
+bool CPU::execute(int opcode, int key_pressed) {
     int id = opcode >> 12;
     int x = (opcode & 0xF00) >> 8;
     int y = (opcode & 0xF0) >> 4;
@@ -139,6 +156,18 @@ bool CPU::execute(int opcode) {
                 }
             }
             V[0xF] = collision;
+            break;
+        }
+        case 0xE: {
+            if (kk == 0x9E) {
+                if (scancode_to_key[key_pressed] == V[x])
+                    PC += 2;
+            } else if  (kk == 0xA1) {
+                if (scancode_to_key[key_pressed] != V[x])
+                    PC += 2;
+            } else {
+                return 0;
+            }
             break;
         }
         default: {

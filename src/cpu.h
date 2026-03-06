@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <array>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 
 #include "display.h"
 #include "memory.h"
@@ -13,7 +15,7 @@ class CPU {
 public:
     CPU(Memory& m);
     void init(bool* f, int& w, int& h);
-    bool execute(int opcode);
+    bool execute(int opcode, int key_pressed);
     bool flip_pixel(int x, int y);
 
     int PC;                    // Program Counter
@@ -27,6 +29,7 @@ public:
     int height;
     array<bool, 64 * 32> frame_buffer;
     Memory& memory;
+    array<int, SDL_SCANCODE_COUNT> scancode_to_key;
 };
 
 #endif

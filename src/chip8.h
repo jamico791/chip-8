@@ -13,15 +13,18 @@ class Chip8 {
 public:
     Chip8();
     void read_program(string filename);
-    void print_cpu();
-    int cpu_step();
+    int cpu_step(int key_pressed);
     void init();
     void loop(bool& running);
     void shutdown();
+    void step();
+    void print_cpu();
 
+private:
     int width;
     int height;
     int scale;
+    bool should_step;
 
     Memory memory;
     CPU cpu;
