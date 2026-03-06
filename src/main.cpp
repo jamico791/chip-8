@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     SDL_SetLogPriorities(SDL_LOG_PRIORITY_DEBUG);
     string filename = argv[1];
     Chip8 chip8 = Chip8();
-    // chip8.step();
+    chip8.step();
     chip8.init();
     chip8.read_program(filename);
 

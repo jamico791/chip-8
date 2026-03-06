@@ -1,6 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 
+#include <random>
 #include <cstdint>
 #include <array>
 #include <SDL3/SDL.h>
@@ -17,6 +18,7 @@ public:
     void init(bool* f, int& w, int& h);
     bool execute(int opcode, int key_pressed);
     bool flip_pixel(int x, int y);
+    int get_random();
 
     int PC;                    // Program Counter
     int I;                     // Special 16-bit register
@@ -31,6 +33,11 @@ public:
     Memory& memory;
     array<int, SDL_SCANCODE_COUNT> scancode_to_key;
     array<int, 0x10> key_to_scancode;
+
+private:
+    random_device rd;
+    mt19937 mt;
+    uniform_int_distribution<int> dist;
 };
 
 #endif

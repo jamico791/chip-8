@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 #include <cstdint>
 #include <stdexcept>
 #include <SDL3/SDL.h>
@@ -20,7 +21,9 @@ CPU::CPU(Memory& m)
       width(64),
       height(32),
       frame_buffer(),
-      memory(m)
+      memory(m),
+      mt(rd()),
+      dist(0, 0x100)
 {
     scancode_to_key.fill(-1);
     scancode_to_key[SDL_SCANCODE_1] = 0x1;
@@ -153,6 +156,9 @@ bool CPU::execute(int opcode, int key_pressed) {
             PC = (nnn + V[0]) - 2;
             break;
         }
+        case 0xC: {
+            V[x] = get_random() & kk;
+        }
         case 0xD: {
             bool collision = false;
             for (int i = I; i < I + n; i++) {
@@ -209,3 +215,5 @@ bool CPU::flip_pixel(int x, int y) {
     frame_buffer[i] = !frame_buffer[i];
     return !frame_buffer[i];
 }
+
+int CPU::get_random() { return dist(mt); }
