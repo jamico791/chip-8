@@ -30,6 +30,7 @@ public:
     array<bool, 64 * 32> frame_buffer;
     Memory& memory;
     array<int, SDL_SCANCODE_COUNT> scancode_to_key;
+    array<int, 0x10> key_to_scancode;
 };
 
 #endif

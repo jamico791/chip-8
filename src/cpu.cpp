@@ -39,6 +39,22 @@ CPU::CPU(Memory& m)
     scancode_to_key[SDL_SCANCODE_R] = 0xD;
     scancode_to_key[SDL_SCANCODE_F] = 0xE;
     scancode_to_key[SDL_SCANCODE_V] = 0xF;
+    key_to_scancode[0x0] = SDL_SCANCODE_X;
+    key_to_scancode[0x1] = SDL_SCANCODE_1;
+    key_to_scancode[0x2] = SDL_SCANCODE_2;
+    key_to_scancode[0x3] = SDL_SCANCODE_3;
+    key_to_scancode[0x4] = SDL_SCANCODE_Q;
+    key_to_scancode[0x5] = SDL_SCANCODE_W;
+    key_to_scancode[0x6] = SDL_SCANCODE_E;
+    key_to_scancode[0x7] = SDL_SCANCODE_A;
+    key_to_scancode[0x8] = SDL_SCANCODE_S;
+    key_to_scancode[0x9] = SDL_SCANCODE_D;
+    key_to_scancode[0xA] = SDL_SCANCODE_Z;
+    key_to_scancode[0xB] = SDL_SCANCODE_C;
+    key_to_scancode[0xC] = SDL_SCANCODE_4;
+    key_to_scancode[0xD] = SDL_SCANCODE_R;
+    key_to_scancode[0xE] = SDL_SCANCODE_F;
+    key_to_scancode[0xF] = SDL_SCANCODE_V;
 }
 
 int reverse(int b) {
@@ -159,11 +175,16 @@ bool CPU::execute(int opcode, int key_pressed) {
             break;
         }
         case 0xE: {
+            int numkeys = 0;
+            const bool* keyboard_state = SDL_GetKeyboardState(&numkeys);
+            bool vx_pressed = false;
+            if (V[x] < numkeys)
+                vx_pressed = keyboard_state[key_to_scancode[V[x]]];
             if (kk == 0x9E) {
-                if (scancode_to_key[key_pressed] == V[x])
+                if (vx_pressed)
                     PC += 2;
             } else if  (kk == 0xA1) {
-                if (scancode_to_key[key_pressed] != V[x])
+                if (!vx_pressed)
                     PC += 2;
             } else {
                 return 0;

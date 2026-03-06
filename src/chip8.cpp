@@ -25,7 +25,7 @@ Chip8::Chip8()
       cpu(memory),
       display(width, height, scale)
 {
-    should_step = true;
+    should_step = false;
     SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "Chip8::Chip8() called");
 }
 
@@ -57,20 +57,6 @@ void Chip8::init() {
 
 void Chip8::loop(bool& running) {
     SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "Enter Chip8::loop");
-    if (should_step) {
-        bool enter_pressed = false;
-        while (!enter_pressed && running) {
-            SDL_Event step_event;
-            while (SDL_PollEvent(&step_event)) {
-                if (step_event.type == SDL_EVENT_KEY_DOWN) {
-                    if (step_event.key.scancode == SDL_SCANCODE_RETURN)
-                        enter_pressed = true;
-                    else if (step_event.key.scancode == SDL_SCANCODE_ESCAPE)
-                        running = false;
-                }
-            }
-        }
-    }
     if (running) {
         int key_pressed = -1;
         SDL_Event event;
@@ -94,6 +80,20 @@ void Chip8::loop(bool& running) {
             print_cpu();
             running = cpu_step(key_pressed);
             display.loop(running, cpu.frame_buffer);
+        }
+    }
+    if (should_step) {
+        bool enter_pressed = false;
+        while (!enter_pressed && running) {
+            SDL_Event step_event;
+            while (SDL_PollEvent(&step_event)) {
+                if (step_event.type == SDL_EVENT_KEY_DOWN) {
+                    if (step_event.key.scancode == SDL_SCANCODE_RETURN)
+                        enter_pressed = true;
+                    else if (step_event.key.scancode == SDL_SCANCODE_ESCAPE)
+                        running = false;
+                }
+            }
         }
     }
 }

@@ -83,7 +83,7 @@ void Display::shutdown() {
 }
 
 bool Display::fill_pixel(int x, int y) {
-    const SDL_FRect rect = {scale * x, scale * y, (float)scale, (float)scale};
+    const SDL_FRect rect = {(float)scale * x, (float)scale * y, (float)scale, (float)scale};
     SDL_RenderFillRect(renderer, &rect);
     return true;
 }
