@@ -18,7 +18,9 @@ public:
     void loop(bool& running);
     void shutdown();
     void step();
+    void load_sprites();
     void print_cpu();
+    Memory memory;
 
 private:
     int width;
@@ -26,7 +28,6 @@ private:
     int scale;
     bool should_step;
 
-    Memory memory;
     CPU cpu;
     Display display;
 };

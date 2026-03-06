@@ -20,7 +20,6 @@ public:
     void shutdown();
     bool fill_pixel(int x, int y);
     bool render_frame(array<bool, 64 * 32>& frame_buffer);
-private:
     SDL_Window* window;
     SDL_Renderer* renderer;
 };

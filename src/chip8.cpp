@@ -46,13 +46,23 @@ void Chip8::read_program(string filename) {
 
 int Chip8::cpu_step(int key_pressed) {
     int opcode = memory.read_16(cpu.PC);
-    int rc = cpu.execute(opcode, key_pressed);
+    int rc = cpu.execute(opcode);
     cpu.PC += 2;
     return rc;
 }
 
 void Chip8::init() {
+    load_sprites();
     display.init();
+    SDL_SetRenderDrawColor(display.renderer, 0x61, 0x86, 0xA9, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(display.renderer);
+
+    // Set Pixel Color
+    SDL_SetRenderDrawColor(display.renderer, 0x21, 0x29, 0x46, SDL_ALPHA_OPAQUE);
+    float x = 63;
+    float y = 31;
+
+    display.render_frame(cpu.frame_buffer);
 }
 
 void Chip8::loop(bool& running) {
@@ -106,14 +116,37 @@ void Chip8::step() {
     should_step = !should_step;
 }
 
+// Write sprites into memory starting at index 0
+void Chip8::load_sprites() {
+    vector<int> vec {
+        0xF0, 0x90, 0x90, 0x90, 0xF0,    //0
+        0x20, 0x60, 0x20, 0x20, 0x70,    //1
+        0xF0, 0x10, 0xF0, 0x80, 0xF0,    //2
+        0xF0, 0x10, 0xF0, 0x10, 0xF0,    //3
+        0x90, 0x90, 0xF0, 0x10, 0x10,    //4
+        0xF0, 0x80, 0xF0, 0x10, 0xF0,    //5
+        0xF0, 0x80, 0xF0, 0x90, 0xF0,    //6
+        0xF0, 0x10, 0x20, 0x40, 0x40,    //7
+        0xF0, 0x90, 0xF0, 0x90, 0xF0,    //8
+        0xF0, 0x90, 0xF0, 0x10, 0xF0,    //9
+        0xF0, 0x90, 0xF0, 0x90, 0x90,    //A
+        0xE0, 0x90, 0xE0, 0x90, 0xE0,    //B
+        0xF0, 0x80, 0x80, 0x80, 0xF0,    //C
+        0xE0, 0x90, 0x90, 0x90, 0xE0,    //D
+        0xF0, 0x80, 0xF0, 0x80, 0xF0,    //E
+        0xF0, 0x80, 0xF0, 0x80, 0x80     //F
+    };
+    memory.write_n(vec, 0);
+}
+
 void Chip8::print_cpu() {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "-------------------------------");
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "CPU State");
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "-------------------------------");
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "PC: %03X  Opcode: %04X", cpu.PC, memory.read_16(cpu.PC));
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "I: %03X", cpu.I);
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "delay: %02X", cpu.delay);
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "sound: %02X", cpu.sound);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "DT: %02X", cpu.DT);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "ST: %02X", cpu.ST);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "SP: %02X", cpu.SP);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, " ");
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Stack:");

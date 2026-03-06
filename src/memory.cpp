@@ -1,4 +1,5 @@
 #include <array>
+#include <vector>
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -43,4 +44,18 @@ void Memory::print(int start, int end) {
 
 void Memory::print() {
     print(0, elem.size() - 1);
+}
+
+vector<int> Memory::read_n(int n, int start) {
+    vector<int> vec;
+    for (int i = 0; i < n; i++) {
+        vec.push_back(elem.at(i + start));
+    }
+    return vec;
+}
+
+void Memory::write_n(vector<int> nums, int start) {
+    for (int i = 0; i < nums.size(); i++) {
+        elem[i + start] = nums.at(i);
+    }
 }

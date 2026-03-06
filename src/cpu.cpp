@@ -13,8 +13,8 @@ using namespace std;
 CPU::CPU(Memory& m) 
     : PC(0x200),
       I(0),
-      delay(0),
-      sound(0),
+      DT(0),
+      ST(0),
       SP(0),
       sub_stack(),
       V(),
@@ -67,7 +67,28 @@ int reverse(int b) {
     return b;
 }
 
-bool CPU::execute(int opcode, int key_pressed) {
+void CPU::op_Dxyn(int x, int y, int n) {
+    bool collision = false;
+    for (int i = I; i < I + n; i++) {
+        int byte = memory[i];
+        byte = reverse(byte);
+            
+        for (int j = 0; j < 8; j++) {
+            bool bit = (byte >> j) & 1;
+            SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "bit: : %d i: %d j: %d", bit, i, j);
+            if (bit) {
+                int local_index = (i - I);
+                int coord_x = V[x];
+                int coord_y = V[y];
+                if(flip_pixel(coord_x + j, coord_y + local_index))
+                    collision = true;
+            } 
+        }
+    }
+    V[0xF] = collision;
+}
+
+bool CPU::execute(int opcode) {
     int id = opcode >> 12;
     int x = (opcode & 0xF00) >> 8;
     int y = (opcode & 0xF0) >> 4;
@@ -160,24 +181,7 @@ bool CPU::execute(int opcode, int key_pressed) {
             V[x] = get_random() & kk;
         }
         case 0xD: {
-            bool collision = false;
-            for (int i = I; i < I + n; i++) {
-                int byte = memory[i];
-                byte = reverse(byte);
-            
-                for (int j = 0; j < 8; j++) {
-                    bool bit = (byte >> j) & 1;
-                    SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "bit: : %d i: %d j: %d", bit, i, j);
-                    if (bit) {
-                        int local_index = (i - I);
-                        int coord_x = V[x];
-                        int coord_y = V[y];
-                        if(flip_pixel(coord_x + j, coord_y + local_index))
-                            collision = true;
-                    } 
-                }
-            }
-            V[0xF] = collision;
+            op_Dxyn(x, y, n);
             break;
         }
         case 0xE: {
@@ -194,6 +198,58 @@ bool CPU::execute(int opcode, int key_pressed) {
                     PC += 2;
             } else {
                 return 0;
+            }
+            break;
+        }
+        case 0xF: {
+            switch (kk) {
+                case 0x07: {
+                    V[x] = DT;
+                    break;
+                }
+                case 0x0A: {
+                    SDL_Event event;
+                    
+                    bool is_valid_key = false;
+                    int scancode_pressed = -1;
+                    while (event.type != SDL_EVENT_KEY_DOWN && !is_valid_key) {
+                        while (SDL_PollEvent(&event)) {
+                            scancode_pressed = event.key.scancode;
+                            for (int i = 0; i < key_to_scancode.size(); i++)
+                                if (key_to_scancode[i] == scancode_pressed)
+                                    is_valid_key = true;
+                                else if (scancode_pressed == SDL_SCANCODE_ESCAPE)
+                                    return 0;
+                        }
+                    }
+                    V[x] = scancode_to_key[scancode_pressed];
+                    break;
+                }
+                case 0x15: {
+                    DT = V[x];
+                    break;
+                }
+                case 0x18: {
+                    ST = V[x];
+                    break;
+                }
+                case 0x1E: {
+                    I = (I + V[x]) & 0xFFF;
+                    break;
+                }
+                case 0x29: {
+                    I = V[x] * 5;
+                    break;
+                }
+                case 0x33: {
+                    break;
+                }
+                case 0x55: {
+                    break;
+                }
+                case 0x65: {
+                    break;
+                }
             }
             break;
         }
