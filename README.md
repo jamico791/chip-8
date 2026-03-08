@@ -30,11 +30,11 @@
     - [x] Dxyn - DRW Vx, Vy, nibble
     - [x] Ex9E - SKP Vx
     - [x] ExA1 - SKNP Vx
-    - [ ] Fx07 - LD Vx, DT
-    - [ ] Fx0A - LD Vx, K
-    - [ ] Fx15 - LD DT, Vx
-    - [ ] Fx18 - LD ST, Vx
-    - [ ] Fx1E - ADD I, Vx
+    - [x] Fx07 - LD Vx, DT
+    - [x] Fx0A - LD Vx, K
+    - [x] Fx15 - LD DT, Vx
+    - [x] Fx18 - LD ST, Vx
+    - [x] Fx1E - ADD I, Vx
     - [ ] Fx29 - LD F, Vx
     - [ ] Fx33 - LD B, Vx
     - [ ] Fx55 - LD [I], Vx

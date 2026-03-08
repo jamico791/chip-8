@@ -13,7 +13,7 @@ class Chip8 {
 public:
     Chip8();
     void read_program(string filename);
-    int cpu_step(int key_pressed);
+    int cpu_step();
     void init();
     void loop(bool& running);
     void shutdown();

@@ -20,7 +20,7 @@ void press_enter_to_continue() {
 Chip8::Chip8()
     : width(64),
       height(32),
-      scale(30),
+      scale(20),
       memory(),
       cpu(memory),
       display(width, height, scale)
@@ -44,10 +44,9 @@ void Chip8::read_program(string filename) {
     }
 }
 
-int Chip8::cpu_step(int key_pressed) {
-    int opcode = memory.read_16(cpu.PC);
-    int rc = cpu.execute(opcode);
-    cpu.PC += 2;
+int Chip8::cpu_step() {
+    cpu.fetch();
+    int rc = cpu.execute();
     return rc;
 }
 
@@ -88,7 +87,7 @@ void Chip8::loop(bool& running) {
 
         if (running) {
             print_cpu();
-            running = cpu_step(key_pressed);
+            running = cpu_step();
             display.loop(running, cpu.frame_buffer);
         }
     }
@@ -143,7 +142,7 @@ void Chip8::print_cpu() {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "-------------------------------");
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "CPU State");
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "-------------------------------");
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "PC: %03X  Opcode: %04X", cpu.PC, memory.read_16(cpu.PC));
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "PC: %03X  Opcode: %04X", cpu.PC, cpu.instruction);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "I: %03X", cpu.I);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "DT: %02X", cpu.DT);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "ST: %02X", cpu.ST);

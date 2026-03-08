@@ -19,6 +19,7 @@ public:
     int DT;                    // Delay timer
     int ST;                    // Sound timer
     int SP;                    // Stack Pointer
+    int instruction;
     array<int, 0x10> sub_stack;    // Subroutine stack
     array<int, 0x10> V;        // 16 8-bit General purpose registers
     int width;
@@ -30,7 +31,8 @@ public:
 
     CPU(Memory& m);
     void init(bool* f, int& w, int& h);
-    bool execute(int opcode);
+    void fetch();
+    bool execute();
     bool flip_pixel(int x, int y);
     int get_random();
 

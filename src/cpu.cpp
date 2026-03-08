@@ -69,6 +69,8 @@ int reverse(int b) {
 
 void CPU::op_Dxyn(int x, int y, int n) {
     bool collision = false;
+    int vx = V[x] % width;
+    int vy = V[y] % height;
     for (int i = I; i < I + n; i++) {
         int byte = memory[i];
         byte = reverse(byte);
@@ -78,9 +80,9 @@ void CPU::op_Dxyn(int x, int y, int n) {
             SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "bit: : %d i: %d j: %d", bit, i, j);
             if (bit) {
                 int local_index = (i - I);
-                int coord_x = V[x];
-                int coord_y = V[y];
-                if(flip_pixel(coord_x + j, coord_y + local_index))
+                int coord_x = vx + j;
+                int coord_y = vy + local_index;
+                if (flip_pixel(coord_x, coord_y))
                     collision = true;
             } 
         }
@@ -88,13 +90,18 @@ void CPU::op_Dxyn(int x, int y, int n) {
     V[0xF] = collision;
 }
 
-bool CPU::execute(int opcode) {
-    int id = opcode >> 12;
-    int x = (opcode & 0xF00) >> 8;
-    int y = (opcode & 0xF0) >> 4;
-    int n = opcode & 0xF;
-    int kk = opcode & 0xFF;
-    int nnn = opcode & 0xFFF;
+void CPU::fetch() {
+    instruction = memory.read_16(PC);
+    PC += 2;
+}
+
+bool CPU::execute() {
+    int id = instruction >> 12;
+    int x = (instruction & 0xF00) >> 8;
+    int y = (instruction & 0xF0) >> 4;
+    int n = instruction & 0xF;
+    int kk = instruction & 0xFF;
+    int nnn = instruction & 0xFFF;
 
     switch (id) {
         case 0x0: {
@@ -112,13 +119,13 @@ bool CPU::execute(int opcode) {
             break;
         }
         case 0x1: {
-            PC = nnn - 2;
+            PC = nnn;
             break;
         }
         case 0x2: {
             if (SP + 1 == 0x10) throw std::out_of_range("CPU::execute(int opcode) stack overflow");
             sub_stack[SP++] = PC;
-            PC = nnn - 2;
+            PC = nnn;
             break;
         }
         case 0x3: {
@@ -138,7 +145,7 @@ bool CPU::execute(int opcode) {
             break;
         }
         case 0x7: {
-            V[x] += kk;
+            V[x] = (V[x] + kk) & 0xFF;
             break;
         }
         case 0x8: {
@@ -174,7 +181,7 @@ bool CPU::execute(int opcode) {
             break;
         }
         case 0xB: {
-            PC = (nnn + V[0]) - 2;
+            PC = (nnn + V[0]);
             break;
         }
         case 0xC: {
@@ -242,6 +249,9 @@ bool CPU::execute(int opcode) {
                     break;
                 }
                 case 0x33: {
+                    memory[I] = (V[x] & 900) >> 8;
+                    memory[I + 1] = (V[x] & 90) >> 4;
+                    memory[I + 2] = V[x] & 90;
                     break;
                 }
                 case 0x55: {
@@ -261,15 +271,14 @@ bool CPU::execute(int opcode) {
 }
 
 bool CPU::flip_pixel(int x, int y) {
-    SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "Flip: (%d, %d)", x, y);
+    if (x < width && y < height) {
+        SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "Flip: (%d, %d)", x, y);
 
-    // modulo width/height to wrap out-of-bounds coords
-    x %= width;
-    y %= height;
-
-    int i = (y * width) + x;
-    frame_buffer[i] = !frame_buffer[i];
-    return !frame_buffer[i];
+        int i = (y * width) + x;
+        frame_buffer[i] = !frame_buffer[i];
+        return !frame_buffer[i];
+    }
+    return false;
 }
 
 int CPU::get_random() { return dist(mt); }
