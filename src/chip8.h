@@ -15,7 +15,7 @@ public:
     void read_program(string filename);
     int cpu_step();
     void init();
-    void loop(bool& running);
+    void loop(bool& running, bool should_execute);
     void shutdown();
     void step();
     void load_sprites();

@@ -64,7 +64,7 @@ void Chip8::init() {
     display.render_frame(cpu.frame_buffer);
 }
 
-void Chip8::loop(bool& running) {
+void Chip8::loop(bool& running, bool should_execute) {
     SDL_LogTrace(SDL_LOG_CATEGORY_APPLICATION, "Enter Chip8::loop");
     if (running) {
         int key_pressed = -1;
@@ -85,7 +85,7 @@ void Chip8::loop(bool& running) {
                 running = false;
         }
 
-        if (running) {
+        if (running && should_execute) {
             print_cpu();
             running = cpu_step();
             display.loop(running, cpu.frame_buffer);
