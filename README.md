@@ -1,4 +1,4 @@
-# chip-8
+# chip8-cpp
 
 ## TODO
 
